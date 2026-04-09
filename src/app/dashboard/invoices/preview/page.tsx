@@ -121,6 +121,23 @@ export default function InvoicePreviewPage() {
     }
   };
 
+  const downloadPDF = async () => {
+    if (!invoiceRef.current || !staff) return;
+    try {
+      const element = invoiceRef.current;
+      const canvas = await html2canvas(element, { scale: 2 });
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`請求書_${yearStr}年${monthStr}月_${staff.name}.pdf`);
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      setError('PDFのダウンロードに失敗しました。');
+    }
+  };
+
   if (isLoading) return <div className="flex justify-center py-20"><Loader2 className="animate-spin text-primary" /></div>;
 
   return (
@@ -136,10 +153,17 @@ export default function InvoicePreviewPage() {
         <div className="flex gap-3">
           <button 
             onClick={() => window.print()}
-            className="flex items-center gap-2 px-4 py-2 border border-border rounded-xl font-bold hover:bg-secondary transition-all"
+            className="hidden md:flex items-center gap-2 px-4 py-2 border border-border rounded-xl font-bold hover:bg-secondary transition-all"
           >
             <Printer size={18} />
             ブラウザで印刷
+          </button>
+          <button 
+            onClick={downloadPDF}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold shadow-lg hover:bg-slate-700 transition-all"
+          >
+            <FileText size={18} />
+            PDFを保存
           </button>
         </div>
       </div>
