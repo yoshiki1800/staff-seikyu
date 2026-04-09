@@ -37,7 +37,9 @@ export async function POST(request: Request) {
 
     // メールの内容
     const mailOptions = {
-      from: `"${staff.name}" <${staff.email || 'noreply@example.com'}>`,
+      // SMTPプロバイダ（Xserver等）のスパム判定を避けるため、Fromは認証ユーザーにする
+      from: `"${staff.name} (請求システム)" <${process.env.SMTP_USER || 'noreply@example.com'}>`,
+      replyTo: staff.email || undefined,
       to: 'info@backdoor-g.com',
       subject: `【請求書】${month}分_${staff.name}`,
       text: `${staff.name}です。\n\n${month}分の請求書を送付いたします。\n添付ファイルをご確認ください。`,
