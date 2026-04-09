@@ -8,11 +8,11 @@ export async function POST(request: Request) {
     const session = await getSession();
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { pdfBase64, entryIds, totalAmount, invoiceNumber, month } = await request.json();
+    const { entryIds, totalAmount, invoiceNumber, month, origin } = await request.json();
 
-    if (!pdfBase64 || !entryIds || entryIds.length === 0) {
+    if (!entryIds || entryIds.length === 0) {
       return NextResponse.json({ error: 'データが不足しています。' }, { status: 400 });
-}
+    }
 
     // スタッフの情報を取得
     const staff = await prisma.staff.findUnique({
@@ -25,10 +25,11 @@ export async function POST(request: Request) {
     // テスト用の場合は Ethereal Email などのモックを使用するのが一般的ですが、
     // ここではユーザーが指定した info@backdoor-g.com への送信ロジックを記載します。
     // ※ 実際の送信には SMTP サーバーの認証情報が必要です。
+    const port = parseInt(process.env.SMTP_PORT || '587');
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.example.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: false, // true for 465, false for other ports
+      port: port,
+      secure: port === 465, // 465の場合はtrue、それ以外はfalse
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -42,14 +43,7 @@ export async function POST(request: Request) {
       replyTo: staff.email || undefined,
       to: 'info@backdoor-g.com',
       subject: `【請求書】${month}分_${staff.name}`,
-      text: `${staff.name}です。\n\n${month}分の請求書を送付いたします。\n添付ファイルをご確認ください。`,
-      attachments: [
-        {
-          filename: `請求書_${month}_${staff.name}.pdf`,
-          content: pdfBase64,
-          encoding: 'base64',
-        },
-      ],
+      text: `${staff.name}です。\n\n${month}分の請求書を作成・提出しました。\n以下のURL（管理システム）から請求書の確認と、PDFのダウンロード・印刷を行ってください。\n\n${origin || 'https://seikyu-vb.vercel.app'}/dashboard/invoices/preview?ids=${entryIds.join(',')}\n\nよろしくお願いします。`
     };
 
     // 実際の送信処理（デモ環境ではエラーを回避するために条件付き、またはモック動作にすることも検討）
