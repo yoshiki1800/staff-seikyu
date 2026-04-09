@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Staff {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  pin       String    // 簡易的な暗証番号
+  role      String    @default("staff")
+  email     String?
+  realName  String?   // 本名
+  therapistName String? // セラピスト名
+  phone     String?   // 電話番号
+  address   String?   // 住所
+  bankInfo  String?   // テンプレート挿入用：銀行名、支店、口座種別、口座番号、名義
+  entries   Entry[]
+  invoices  Invoice[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Entry {
+  id        String   @id @default(cuid())
+  date      DateTime
+  course    String   // コース名
+  sales     Int      // 売上
+  reward    Int      // 報酬
+  status    String   @default("pending") // pending, invoiced
+  staffId   String
+  staff     Staff    @relation(fields: [staffId], references: [id])
+  invoiceId String?
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique
+  month         String   // YYYY-MM
+  totalAmount   Int
+  status        String   @default("draft") // draft, sent
+  staffId       String
+  staff         Staff    @relation(fields: [staffId], references: [id])
+  entries       Entry[]
+  sentAt        DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
