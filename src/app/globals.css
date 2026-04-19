@@ -71,3 +71,15 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--muted-foreground);
 }
+
+/* --------- html2canvas lab() fix --------- */
+/* 
+ * Tailwind CSS v4 defaults border, outline, and ring colors to lab()/oklch(). 
+ * This causes html2canvas to crash when evaluating window.getComputedStyle().
+ * We force a standard Hex fallback for all elements to prevent this.
+ */
+*, ::before, ::after {
+  border-color: #e2e8f0;
+  outline-color: transparent;
+}
+
