@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 
     const entries = await prisma.entry.findMany({
       where: { 
-        staffId: session.staff.id,
+        ...(session.staff.role === 'admin' ? {} : { staffId: session.staff.id }),
         ...(ids ? { id: { in: ids } } : {})
       },
       orderBy: { date: 'desc' },

@@ -48,20 +48,28 @@ export async function POST(request: Request) {
 
     // 実際の送信処理（デモ環境ではエラーを回避するために条件付き、またはモック動作にすることも検討）
     // 今回は実際にコードとして記述します。
-    if (process.env.SMTP_HOST) {
-      try {
-        await transporter.sendMail(mailOptions);
-      } catch (mailErr) {
-        console.error('Mail Send Error:', mailErr);
-        // SMTPが未設定の場合は、ここではエラーを返さず「送信モック成功」と見なす仕組みにすることも可能ですが、
-        // ユーザー体験のためにエラーメッセージを返します。
-        return NextResponse.json({ 
-          error: 'メール送信に失敗しました。SMTPサーバーの設定を確認してください。',
-          details: '環境変数 (SMTP_HOST, SMTP_USER, SMTP_PASS) の設定が必要です。'
-        }, { status: 500 });
-      }
-    } else {
-      console.warn('SMTP_HOST is not configured. Skipping actual email sending, but saving invoice.');
+    // SMTP設定の確認
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+
+    if (!smtpHost || !smtpUser || !smtpPass) {
+      console.error('Missing SMTP configuration:', { smtpHost, smtpUser: !!smtpUser, smtpPass: !!smtpPass });
+      return NextResponse.json({ 
+        error: 'メール送信設定（SMTP）が未設定です。',
+        details: '環境変数 (SMTP_HOST, SMTP_USER, SMTP_PASS) の設定を管理者へ依頼してください。'
+      }, { status: 500 });
+    }
+
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`Invoice email sent successfully to ${mailOptions.to} for staff ${staff.name}`);
+    } catch (mailErr) {
+      console.error('Mail Send Error:', mailErr);
+      return NextResponse.json({ 
+        error: 'メール送信に失敗しました。SMTPサーバーの設定を確認してください。',
+        details: mailErr instanceof Error ? mailErr.message : String(mailErr)
+      }, { status: 500 });
     }
 
     // データベースの更新
@@ -95,6 +103,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, invoiceId: invoice.id });
   } catch (error: any) {
     console.error('Invoice Send Route Error:', error);
-    return NextResponse.json({ error: 'サーバーエラーが発生しました。' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'サーバーエラーが発生しました。',
+      details: error.message || String(error)
+    }, { status: 500 });
   }
 }

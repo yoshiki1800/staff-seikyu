@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, CheckCircle2, ChevronRight, Loader2, AlertCircle, Calendar } from 'lucide-react';
+import { FileText, Check, CheckCircle2, ChevronRight, Loader2, AlertCircle, Calendar } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface Entry {
@@ -157,11 +157,12 @@ export default function InvoicesPage() {
                       }`}
                     >
                       <td className="px-6 py-4">
-                        <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${
-                          isSelected ? 'bg-primary border-primary text-white' : 'border-slate-300 dark:border-slate-600'
-                        }`}>
-                          {isSelected && <CheckCircle2 size={14} />}
-                        </div>
+                        <input 
+                          type="checkbox"
+                          readOnly
+                          checked={isSelected}
+                          className="w-6 h-6 accent-emerald-500 pointer-events-none shadow-sm"
+                        />
                       </td>
                       <td className="px-6 py-4 text-sm font-bold">
                         {new Date(entry.date).toLocaleDateString('ja-JP')}
