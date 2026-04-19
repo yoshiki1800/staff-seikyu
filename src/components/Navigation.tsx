@@ -43,25 +43,25 @@ export default function Navigation({ staffName, staffRole }: NavigationProps) {
           <span className="font-black text-lg tracking-tight hidden md:block">BD-STFSEIKYU</span>
         </Link>
 
-        <div className="flex items-center gap-1 md:gap-4">
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-4 overflow-x-auto custom-scrollbar flex-1 justify-end md:justify-center px-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link 
                 key={item.href} 
                 href={item.href}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-bold transition-all ${
+                className={`relative flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5 px-3 md:px-4 py-2 md:py-2.5 rounded-xl transition-all duration-200 active:scale-90 ${
                   isActive 
-                    ? 'bg-primary/10 text-primary' 
-                    : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+                    ? 'bg-primary/15 text-primary premium-shadow' 
+                    : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800'
                 }`}
               >
-                <item.icon size={18} />
-                <span className="hidden lg:block">{item.name}</span>
+                <item.icon className="w-5 h-5 md:w-[18px] md:h-[18px]" />
+                <span className="text-[10px] md:text-sm font-bold whitespace-nowrap">{item.name}</span>
                 {isActive && (
                   <motion.div 
                     layoutId="active-nav"
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-t-full"
+                    className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary rounded-t-full"
                   />
                 )}
               </Link>

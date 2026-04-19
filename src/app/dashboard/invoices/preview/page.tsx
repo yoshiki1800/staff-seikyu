@@ -163,7 +163,7 @@ export default function InvoicePreviewPage() {
       <div className="flex items-center justify-between no-print">
         <button 
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all"
+          className="flex items-center gap-2 text-slate-600 bg-slate-100 px-4 py-2 rounded-xl hover:bg-slate-200 hover:text-slate-900 font-bold transition-all duration-200 active:scale-95"
         >
           <ChevronLeft size={20} />
           選択画面に戻る
@@ -171,7 +171,7 @@ export default function InvoicePreviewPage() {
         <div className="flex gap-3">
           <button 
             onClick={() => window.print()}
-            className="hidden md:flex items-center gap-2 px-4 py-2 border border-border rounded-xl font-bold hover:bg-secondary transition-all"
+            className="hidden md:flex items-center gap-2 px-5 py-2.5 border-2 border-slate-200 rounded-xl font-bold hover:bg-slate-50 text-slate-700 transition-all duration-200 active:scale-95"
           >
             <Printer size={18} />
             ブラウザで印刷
@@ -179,7 +179,7 @@ export default function InvoicePreviewPage() {
           <button 
             onClick={downloadPDF}
             disabled={isGeneratingPDF}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold shadow-lg hover:bg-slate-700 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold shadow-xl hover:bg-slate-800 hover:shadow-md transition-all duration-200 active:scale-95 disabled:opacity-50"
           >
             {isGeneratingPDF ? <Loader2 className="animate-spin" size={18} /> : <FileText size={18} />}
             {isGeneratingPDF ? 'PDF生成中...' : 'PDFを保存'}
@@ -192,7 +192,7 @@ export default function InvoicePreviewPage() {
         <div className="lg:col-span-3">
           <div 
             ref={invoiceRef}
-            className="bg-white text-[#0f172a] p-8 md:p-10 border border-[#e2e8f0] rounded-sm min-h-[1123px] w-[794px] max-w-full mx-auto font-sans"
+            className="bg-[#ffffff] text-[#0f172a] p-8 md:p-10 border border-[#e2e8f0] rounded-sm min-h-[1123px] w-[794px] max-w-full mx-auto font-sans"
             style={{ fontSize: '11px', lineHeight: '1.4' }}
           >
             {/* Header */}
@@ -339,7 +339,7 @@ export default function InvoicePreviewPage() {
                     <CheckCircle2 size={48} className="mx-auto mb-4" />
                     <p className="font-black">送信完了しました</p>
                   </div>
-                  <button onClick={() => router.push('/dashboard')} className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">ホームに戻る</button>
+                  <button onClick={() => router.push('/dashboard')} className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all duration-200 active:scale-[0.98]">ホームに戻る</button>
                </motion.div>
             ) : (
               <div className="space-y-4">
@@ -348,7 +348,7 @@ export default function InvoicePreviewPage() {
                 <button 
                   onClick={submitInvoice}
                   disabled={isSending || !staff?.bankInfo || !staff?.realName}
-                  className="w-full bg-primary text-slate-900 py-4 rounded-2xl font-bold text-lg premium-shadow hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  className="w-full bg-primary text-slate-900 py-4 md:py-5 rounded-2xl font-black text-lg premium-shadow hover:bg-primary/90 hover:shadow-md transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSending ? <Loader2 className="animate-spin" /> : <Send size={20} />}
                   請求書を送信する
