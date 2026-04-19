@@ -347,20 +347,20 @@ export default function InvoicePreviewPage() {
                 
                 <button 
                   onClick={submitInvoice}
-                  disabled={isSending || !staff?.bankInfo || !staff?.realName}
+                  disabled={isSending || !staff?.realName}
                   className="w-full bg-primary text-slate-900 py-4 md:py-5 rounded-2xl font-black text-lg premium-shadow hover:bg-primary/90 hover:shadow-md transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {isSending ? <Loader2 className="animate-spin" /> : <Send size={20} />}
                   請求書を送信する
                 </button>
                 
-                {(!staff?.bankInfo || !staff?.realName) && (
-                  <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl space-y-2">
+                {(!staff?.realName) && (
+                  <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl space-y-2 mb-4">
                     <p className="text-[11px] text-amber-700 dark:text-amber-400 font-bold flex items-center gap-2">
                       <AlertTriangle size={14} /> 情報を補完してください
                     </p>
                     <p className="text-[10px] text-slate-600 dark:text-slate-400 leading-relaxed">
-                      請求書作成には「本名」と「備考欄（振込先）」の設定が必要です。プロフィールから設定してください。
+                      請求書作成には「本名」の設定が必要です。プロフィールから設定してください。
                     </p>
                     <button 
                       onClick={() => router.push('/dashboard/profile')}

@@ -195,7 +195,7 @@ export default function ProfilePage() {
           <button 
             type="submit"
             disabled={isSaving}
-            className="w-full bg-primary text-slate-900 py-5 rounded-[2rem] font-bold text-lg premium-shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full bg-primary text-slate-900 py-5 rounded-[2rem] font-bold text-lg premium-shadow hover:bg-primary/90 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {isSaving ? <Loader2 className="animate-spin" size={24} /> : <Save size={24} />}
             プロフィール設定を更新する

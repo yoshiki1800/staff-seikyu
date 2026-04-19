@@ -208,7 +208,7 @@ export default function EntriesPage() {
                   <button 
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-primary text-slate-900 py-4 rounded-2xl font-bold premium-shadow hover:bg-primary/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    className="w-full bg-primary text-slate-900 py-4 rounded-2xl font-bold premium-shadow hover:bg-primary/90 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
                   >
                     {isSubmitting ? <Loader2 className="animate-spin" /> : <Plus size={20} />}
                     記録を保存する

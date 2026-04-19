@@ -95,7 +95,7 @@ export default function InvoicesPage() {
             </div>
             <button 
               onClick={handleNextStep}
-              className="bg-primary text-slate-900 px-6 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all flex items-center gap-2"
+              className="bg-primary text-slate-900 px-6 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all duration-200 active:scale-[0.98] flex items-center gap-2"
             >
               請求書を作成する <ChevronRight size={18} />
             </button>
@@ -114,7 +114,7 @@ export default function InvoicesPage() {
           </p>
           <button 
             onClick={() => router.push('/dashboard/entries')}
-            className="bg-secondary text-secondary-foreground px-6 py-2.5 rounded-xl font-bold hover:bg-border transition-all"
+            className="bg-secondary text-secondary-foreground px-6 py-2.5 rounded-xl font-bold hover:bg-border transition-all duration-200 active:scale-95"
           >
             稼働を入力する
           </button>

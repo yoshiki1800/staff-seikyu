@@ -172,7 +172,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading || !selectedStaffId || pin.length < 4}
-              className="w-full bg-primary text-slate-900 py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 group"
+              className="w-full bg-primary text-slate-900 py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 group"
             >
               {isLoading ? (
                 <Loader2 className="animate-spin" size={20} />
