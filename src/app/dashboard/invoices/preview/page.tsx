@@ -229,8 +229,8 @@ export default function InvoicePreviewPage() {
                         </p>
                    </div>
                    {/* Seal placeholder */}
-                   <div className="w-12 h-12 border border-[#fecaca] rounded-full flex items-center justify-center text-red-500 font-black text-[10px] transform rotate-[-5deg] ml-3">
-                      <div className="border border-red-500 rounded-full w-10 h-10 flex items-center justify-center">
+                   <div className="w-12 h-12 border border-[#fecaca] rounded-full flex items-center justify-center text-[#ef4444] font-black text-[10px] transform rotate-[-5deg] ml-3">
+                      <div className="border border-[#ef4444] rounded-full w-10 h-10 flex items-center justify-center">
                         {staff?.realName?.slice(0, 2) || '印'}
                       </div>
                    </div>
