@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, List, Trash2, Calendar, BookOpen, DollarSign, Award, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, List, Trash2, Edit2, Calendar, BookOpen, DollarSign, Award, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Entry {
   id: string;
@@ -25,6 +25,7 @@ export default function EntriesPage() {
   const [sales, setSales] = useState('');
   const [reward, setReward] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchEntries();
@@ -50,8 +51,11 @@ export default function EntriesPage() {
     setError(null);
 
     try {
-      const res = await fetch('/api/entries', {
-        method: 'POST',
+      const url = editingId ? `/api/entries/${editingId}` : '/api/entries';
+      const method = editingId ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date, course, sales, reward }),
       });
@@ -60,6 +64,8 @@ export default function EntriesPage() {
         setCourse('');
         setSales('');
         setReward('');
+        setEditingId(null);
+        setError(null);
         fetchEntries();
         // 成功したらフォームを閉じる（任意）
         // setShowForm(false);
@@ -72,6 +78,20 @@ export default function EntriesPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleEditClick = (entry: Entry) => {
+    setEditingId(entry.id);
+    // YYYY-MM-DD format
+    const entryDate = new Date(entry.date);
+    const tzOffset = entryDate.getTimezoneOffset() * 60000;
+    const localISOTime = new Date(entryDate.getTime() - tzOffset).toISOString().split('T')[0];
+    setDate(localISOTime);
+    setCourse(entry.course);
+    setSales(entry.sales.toString());
+    setReward(entry.reward.toString());
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const deleteEntry = async (id: string) => {
@@ -96,13 +116,22 @@ export default function EntriesPage() {
           </p>
         </div>
         <button 
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            setShowForm(!showForm);
+            if (!showForm && editingId) {
+              // キャンセルして新規追加に戻す
+              setEditingId(null);
+              setCourse('');
+              setSales('');
+              setReward('');
+            }
+          }}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all ${
-            showForm ? 'bg-slate-200 text-slate-700' : 'bg-primary text-slate-900 premium-shadow'
+            showForm && !editingId ? 'bg-slate-200 text-slate-700' : 'bg-primary text-slate-900 premium-shadow'
           }`}
         >
-          {showForm ? <ChevronUp size={20} /> : <Plus size={20} />}
-          {showForm ? 'フォームを閉じる' : '新規追加'}
+          {showForm && !editingId ? <ChevronUp size={20} /> : <Plus size={20} />}
+          {showForm && !editingId ? 'フォームを閉じる' : '新規追加'}
         </button>
       </div>
 
@@ -204,14 +233,28 @@ export default function EntriesPage() {
                   </div>
                 )}
 
-                <div className="md:col-span-2 pt-4">
+                <div className="md:col-span-2 pt-4 flex gap-3">
+                  {editingId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingId(null);
+                        setCourse('');
+                        setSales('');
+                        setReward('');
+                      }}
+                      className="w-1/3 bg-slate-200 text-slate-700 py-4 rounded-2xl font-bold hover:bg-slate-300 transition-all duration-200 active:scale-[0.98] disabled:opacity-50"
+                    >
+                      キャンセル
+                    </button>
+                  )}
                   <button 
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-primary text-slate-900 py-4 rounded-2xl font-bold premium-shadow hover:bg-primary/90 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50"
+                    className={`${editingId ? 'w-2/3' : 'w-full'} bg-primary text-slate-900 py-4 rounded-2xl font-bold premium-shadow hover:bg-primary/90 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50`}
                   >
-                    {isSubmitting ? <Loader2 className="animate-spin" /> : <Plus size={20} />}
-                    記録を保存する
+                    {isSubmitting ? <Loader2 className="animate-spin" /> : (editingId ? <Edit2 size={20} /> : <Plus size={20} />)}
+                    {editingId ? '記録を更新する' : '記録を保存する'}
                   </button>
                 </div>
               </form>
@@ -279,12 +322,22 @@ export default function EntriesPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       {entry.status === 'pending' && (
-                        <button 
-                          onClick={() => deleteEntry(entry.id)}
-                          className="p-2 text-slate-400 hover:text-destructive opacity-0 group-hover:opacity-100 transition-all"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <div className="flex justify-end gap-1 sm:gap-2">
+                          <button 
+                            onClick={() => handleEditClick(entry)}
+                            className="p-2 text-slate-400 hover:text-primary transition-all rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                            title="修正"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button 
+                            onClick={() => deleteEntry(entry.id)}
+                            className="p-2 text-slate-400 hover:text-destructive transition-all rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                            title="削除"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
