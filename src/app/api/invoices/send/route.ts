@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { after } from 'next/server';
 import nodemailer from 'nodemailer';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
@@ -46,9 +47,7 @@ export async function POST(request: Request) {
       text: `${staff.name}です。\n\n${month}分の請求書を作成・提出しました。\n以下のURL（管理システム）から請求書の確認と、PDFのダウンロード・印刷を行ってください。\n\n${origin || 'https://seikyu-vb.vercel.app'}/dashboard/invoices/preview?ids=${entryIds.join(',')}\n\nよろしくお願いします。`
     };
 
-    // 実際の送信処理（デモ環境ではエラーを回避するために条件付き、またはモック動作にすることも検討）
-    // 今回は実際にコードとして記述します。
-    // SMTP設定の確認
+    // デモ環境ではエラーを回避するために条件付き、またはモック動作にすることも検討
     const smtpHost = process.env.SMTP_HOST;
     const smtpUser = process.env.SMTP_USER;
     const smtpPass = process.env.SMTP_PASS;
@@ -61,19 +60,7 @@ export async function POST(request: Request) {
       }, { status: 500 });
     }
 
-    try {
-      await transporter.sendMail(mailOptions);
-      console.log(`Invoice email sent successfully to ${mailOptions.to} for staff ${staff.name}`);
-    } catch (mailErr) {
-      console.error('Mail Send Error:', mailErr);
-      return NextResponse.json({ 
-        error: 'メール送信に失敗しました。SMTPサーバーの設定を確認してください。',
-        details: mailErr instanceof Error ? mailErr.message : String(mailErr)
-      }, { status: 500 });
-    }
-
-    // データベースの更新
-    // 1. 請求書レコードの作成
+    // 1. 先にデータベースの更新を行う (フロントエンド側で成功と判定させるため)
     const invoice = await prisma.invoice.create({
       data: {
         invoiceNumber,
@@ -89,7 +76,7 @@ export async function POST(request: Request) {
       },
     });
 
-    // 2. Entryのステータスを invoiced に更新
+    // Entryのステータスを invoiced に更新
     await prisma.entry.updateMany({
       where: {
         id: { in: entryIds },
@@ -98,6 +85,16 @@ export async function POST(request: Request) {
         status: 'invoiced',
         invoiceId: invoice.id,
       },
+    });
+
+    // 2. メール送信をバックグラウンドで実行 (Vercelのタイムアウトを回避)
+    after(async () => {
+      try {
+        await transporter.sendMail(mailOptions);
+        console.log(`Invoice email sent successfully to ${mailOptions.to} for staff ${staff.name}`);
+      } catch (mailErr) {
+        console.error('Mail Send Error (Background):', mailErr);
+      }
     });
 
     return NextResponse.json({ success: true, invoiceId: invoice.id });

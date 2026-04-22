@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { User, Lock, ChevronRight, Loader2, CreditCard } from 'lucide-react';
 
 interface Staff {
@@ -156,18 +156,13 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <AnimatePresence>
-              {error && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-bold p-4 rounded-xl border border-red-100 dark:border-red-900/30 text-center"
-                >
-                  {error}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {error && (
+              <div 
+                className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-bold p-4 rounded-xl border border-red-100 dark:border-red-900/30 text-center transition-all duration-300"
+              >
+                {error}
+              </div>
+            )}
 
             <button
               type="submit"

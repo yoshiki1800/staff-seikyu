@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Save, Building, CreditCard, User, Loader2, CheckCircle2, Phone, MapPin, BadgeCheck } from 'lucide-react';
 
 interface StaffInfo {
@@ -178,19 +178,14 @@ export default function ProfilePage() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <AnimatePresence>
-            {message && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-sm font-bold p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/30 flex items-center gap-2"
-              >
-                <CheckCircle2 size={18} />
-                {message}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {message && (
+            <div 
+              className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-sm font-bold p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/30 flex items-center gap-2 transition-all duration-300 transform"
+            >
+              <CheckCircle2 size={18} />
+              {message}
+            </div>
+          )}
 
           <button 
             type="submit"

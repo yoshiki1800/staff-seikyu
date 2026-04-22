@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FileText, Send, ChevronLeft, Loader2, CheckCircle2, AlertTriangle, Printer, Phone, MapPin, User, CreditCard, BadgeCheck } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -99,12 +99,18 @@ export default function InvoicePreviewPage() {
         }),
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        // Vercel 504エラー等でHTMLが返された場合の対策
+        throw new Error('通信がタイムアウトした可能性があります。しばらく待ってから再度ご確認ください。');
+      }
 
       if (res.ok) {
         setIsSent(true);
       } else {
-        setError(data.error || '送信に失敗しました。');
+        setError(data?.error || '送信に失敗しました。');
       }
     } catch (err: any) {
       console.error('Send error:', err);
@@ -334,13 +340,13 @@ export default function InvoicePreviewPage() {
             </div>
 
             {isSent ? (
-               <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center">
-                  <div className="bg-emerald-50 text-emerald-600 p-6 md:p-8 rounded-2xl mb-4 border border-emerald-100">
+               <div className="text-center transition-all duration-500 animate-in fade-in zoom-in-95">
+                  <div className="bg-emerald-50 text-emerald-600 p-6 md:p-8 rounded-2xl mb-4 border border-emerald-100 shadow-sm">
                     <CheckCircle2 size={48} className="mx-auto mb-4" />
-                    <p className="font-black">送信完了しました</p>
+                    <p className="font-black text-lg">送信完了しました</p>
                   </div>
                   <button onClick={() => router.push('/dashboard')} className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all duration-200 active:scale-[0.98]">ホームに戻る</button>
-               </motion.div>
+               </div>
             ) : (
               <div className="space-y-4">
                 {error && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-[10px] font-bold border border-red-100">{error}</div>}
