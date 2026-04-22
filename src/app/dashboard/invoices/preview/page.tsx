@@ -345,7 +345,7 @@ export default function InvoicePreviewPage() {
                     <CheckCircle2 size={48} className="mx-auto mb-4" />
                     <p className="font-black text-lg">送信完了しました</p>
                   </div>
-                  <button onClick={() => router.push('/dashboard')} className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all duration-200 active:scale-[0.98]">ホームに戻る</button>
+                  <button onClick={() => window.location.href = '/dashboard'} className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-slate-800 transition-all duration-200 active:scale-[0.98]">ホームに戻る</button>
                </div>
             ) : (
               <div className="space-y-4">

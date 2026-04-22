@@ -56,21 +56,21 @@ export default function DashboardPage() {
   const cards = [
     { 
       label: '未請求の報酬', 
-      value: `¥${data?.summary.totalReward.toLocaleString() || 0}`, 
+      value: `¥${data?.summary?.totalReward?.toLocaleString() || 0}`, 
       icon: CreditCard,
       color: 'bg-blue-500', 
       textColor: 'text-blue-600' 
     },
     { 
       label: '案件数', 
-      value: `${data?.summary.count || 0} 件`, 
+      value: `${data?.summary?.count || 0} 件`, 
       icon: Clock,
       color: 'bg-purple-500', 
       textColor: 'text-purple-600' 
     },
     { 
       label: '今月の売上累計', 
-      value: `¥${data?.summary.totalSales.toLocaleString() || 0}`, 
+      value: `¥${data?.summary?.totalSales?.toLocaleString() || 0}`, 
       icon: TrendingUp,
       color: 'bg-emerald-500', 
       textColor: 'text-emerald-600' 
@@ -145,14 +145,14 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {data?.recentEntries.length === 0 ? (
+              {(!data?.recentEntries || data.recentEntries.length === 0) ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
                     まだデータがありません。「稼働を入力する」から開始しましょう！
                   </td>
                 </tr>
               ) : (
-                data?.recentEntries.map((entry) => (
+                data.recentEntries.map((entry) => (
                   <tr key={entry.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors">
                     <td className="px-6 py-4 text-sm font-bold">
                       {new Date(entry.date).toLocaleDateString('ja-JP')}

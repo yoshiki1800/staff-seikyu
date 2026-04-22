@@ -26,10 +26,16 @@ export default function ErrorBoundary({
           読み込みエラーが発生しました
         </h1>
         
-        <p className="text-slate-500 dark:text-slate-400 font-medium mb-8 leading-relaxed">
+        <p className="text-slate-500 dark:text-slate-400 font-medium mb-4 leading-relaxed">
           一時的な通信エラー、または表示の不具合が発生しました。
           システム自体は正常に稼働していますのでご安心ください。
         </p>
+
+        <div className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-mono p-4 rounded-xl mb-8 overflow-auto break-words text-left max-h-32">
+          <strong>Debug Info:</strong><br />
+          {error?.message || "Unknown Error"}<br />
+          Digest: {error?.digest || "N/A"}
+        </div>
 
         <div className="space-y-4">
           <button
